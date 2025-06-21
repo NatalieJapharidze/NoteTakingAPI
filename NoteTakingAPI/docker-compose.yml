@@ -2,13 +2,20 @@ services:
   noteapi:
     build: .
     ports:
-      - "5800:80"
+      - "8080:80"
+      - "8081:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=localhost;Port=5700;Database=noteapi_dev;Username=postgres;Password=password123
+      - ASPNETCORE_URLS=https://+:8081;http://+:80
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=noteapi_dev;Username=postgres;Password=password123
+      - JwtSettings__Secret=dzalian-dzalian-dzalian-magari-secret-256-bit
+      - JwtSettings__Issuer=NoteApi
+      - JwtSettings__Audience=NoteApiUsers
+      - JwtSettings__ExpirationInMinutes=60
     depends_on:
       postgres:
         condition: service_healthy
+    restart: unless-stopped
 
   postgres:
     image: postgres:15
@@ -21,10 +28,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dev -d noteapi_dev"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      test: ["CMD-SHELL", "pg_isready -U postgres -d noteapi_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
 
 volumes:
   postgres_data:

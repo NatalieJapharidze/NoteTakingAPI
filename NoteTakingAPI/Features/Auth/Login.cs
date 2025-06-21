@@ -63,10 +63,7 @@ namespace NoteTakingAPI.Features.Auth
 
             private static bool VerifyPassword(string password, string hash)
             {
-                using var sha256 = SHA256.Create();
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                var hashedPassword = Convert.ToBase64String(hashedBytes);
-                return hashedPassword == hash;
+                return BCrypt.Net.BCrypt.Verify(password, hash);
             }
         }
     }

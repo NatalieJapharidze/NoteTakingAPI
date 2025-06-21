@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Reflection.Emit;
-using Microsoft.EntityFrameworkCore;
-using static NoteTakingAPI.Infrastructure.Database.Entities.AppDbContext;
+﻿using Microsoft.EntityFrameworkCore;
+using NoteTakingAPI.Infrastructure.Database.Entities;
 
 namespace NoteTakingAPI.Infrastructure.Database
 {
-    public partial class AppDbContext : DbContext
+    public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -16,7 +14,6 @@ namespace NoteTakingAPI.Infrastructure.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Users
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("users");
@@ -30,7 +27,6 @@ namespace NoteTakingAPI.Infrastructure.Database
                 entity.HasIndex(e => e.Email).IsUnique();
             });
 
-            // Notes
             modelBuilder.Entity<Note>(entity =>
             {
                 entity.ToTable("notes");
@@ -48,7 +44,6 @@ namespace NoteTakingAPI.Infrastructure.Database
                       .HasForeignKey(e => e.UserId);
             });
 
-            // Tags
             modelBuilder.Entity<Tag>(entity =>
             {
                 entity.ToTable("tags");
@@ -58,7 +53,6 @@ namespace NoteTakingAPI.Infrastructure.Database
                 entity.HasIndex(e => e.Name).IsUnique();
             });
 
-            // NoteTags
             modelBuilder.Entity<NoteTag>(entity =>
             {
                 entity.ToTable("note_tags");

@@ -1,10 +1,8 @@
 ﻿using NoteTakingAPI.Infrastructure.Services;
-using static NoteTakingAPI.Infrastructure.Database.Entities.AppDbContext;
-using System.Text;
+using NoteTakingAPI.Infrastructure.Database.Entities;
 using FluentValidation;
-using System.Security.Cryptography;
-using NoteTakingAPI.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
+using NoteTakingAPI.Infrastructure.Database;
 
 namespace NoteTakingAPI.Features.Auth
 {
@@ -62,8 +60,16 @@ namespace NoteTakingAPI.Features.Auth
                     FullName = command.FullName
                 };
 
-                db.Users.Add(user);
-                await db.SaveChangesAsync(ct);
+                try
+                {
+                    db.Users.Add(user);
+                    await db.SaveChangesAsync(ct);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Failed to save user {Email}", command.Email);
+                    return Results.Problem("Failed to create user account");
+                }
 
                 var token = jwtService.GenerateToken(user.Id, user.Email);
 
@@ -75,9 +81,7 @@ namespace NoteTakingAPI.Features.Auth
 
             private static string HashPassword(string password)
             {
-                using var sha256 = SHA256.Create();
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
+                return BCrypt.Net.BCrypt.HashPassword(password, 12);
             }
         }
     }

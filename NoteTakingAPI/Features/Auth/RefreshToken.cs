@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Security.Claims;
+using FluentValidation;
 using NoteTakingAPI.Infrastructure.Services;
 
 namespace NoteTakingAPI.Features.Auth
@@ -44,18 +45,24 @@ namespace NoteTakingAPI.Features.Auth
                     return Results.Unauthorized();
                 }
 
-                var userIdClaim = principal.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-                var emailClaim = principal.FindFirst(System.Security.Claims.ClaimTypes.Email);
+                var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier);
+                var emailClaim = principal.FindFirst(ClaimTypes.Email);
 
                 if (userIdClaim is null || emailClaim is null)
                 {
                     return Results.Unauthorized();
                 }
 
-                var newToken = jwtService.GenerateToken(int.Parse(userIdClaim.Value), emailClaim.Value);
+                if (!int.TryParse(userIdClaim.Value, out var userId))
+                {
+                    logger.LogWarning("Invalid user ID in token: {UserId}", userIdClaim.Value);
+                    return Results.Unauthorized();
+                }
+
+                var newToken = jwtService.GenerateToken(userId, emailClaim.Value);
                 var newRefreshToken = jwtService.GenerateRefreshToken();
 
-                logger.LogInformation("Token refreshed for user {UserId}", userIdClaim.Value);
+                logger.LogInformation("Token refreshed for user {UserId}", userId);
 
                 var response = new Response(newToken, newRefreshToken);
                 return Results.Ok(response);

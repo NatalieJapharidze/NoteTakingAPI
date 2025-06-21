@@ -1,9 +1,9 @@
-﻿using static NoteTakingAPI.Infrastructure.Database.Entities.AppDbContext;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using FluentValidation;
 using NoteTakingAPI.Infrastructure.Database;
 using NoteTakingAPI.Common.Extensions;
 using Microsoft.EntityFrameworkCore;
+using NoteTakingAPI.Infrastructure.Database.Entities;
 
 namespace NoteTakingAPI.Features.Notes
 {
@@ -58,7 +58,6 @@ namespace NoteTakingAPI.Features.Notes
                 db.Notes.Add(note);
                 await db.SaveChangesAsync(ct);
 
-                // Handle tags
                 var tagNames = command.Tags.Distinct().ToList();
                 var existingTags = await db.Tags
                     .Where(t => tagNames.Contains(t.Name))

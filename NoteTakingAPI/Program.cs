@@ -30,10 +30,12 @@ namespace NoteTakingAPI
             {
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
-            builder.Services.AddControllers();
 
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-            var secretKey = jwtSettings["Secret"]!;
+            var secretKey = jwtSettings["Secret"];
+
+            if (string.IsNullOrEmpty(secretKey))
+                throw new InvalidOperationException("JWT Secret is required");
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -123,11 +125,7 @@ namespace NoteTakingAPI
             DeleteNote.Endpoint.Map(app);
             GetTags.Endpoint.Map(app);
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                context.Database.Migrate();
-            }
+            await EnsureDatabaseAsync(app);
 
             app.Run();
         }

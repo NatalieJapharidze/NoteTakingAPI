@@ -6,13 +6,31 @@ namespace NoteTakingAPI.Common.Extensions
     {
         public static int GetUserId(this ClaimsPrincipal user)
         {
+            if (user?.Identity?.IsAuthenticated != true)
+                throw new UnauthorizedAccessException("User is not authenticated");
+
             var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return int.Parse(userIdClaim ?? "0");
+
+            if (string.IsNullOrEmpty(userIdClaim))
+                throw new InvalidOperationException("User ID claim is missing");
+
+            if (!int.TryParse(userIdClaim, out var userId))
+                throw new InvalidOperationException($"Invalid user ID format: {userIdClaim}");
+
+            return userId;
         }
 
         public static string GetEmail(this ClaimsPrincipal user)
         {
-            return user.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty;
+            if (user?.Identity?.IsAuthenticated != true)
+                throw new UnauthorizedAccessException("User is not authenticated");
+
+            var email = user.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (string.IsNullOrEmpty(email))
+                throw new InvalidOperationException("Email claim is missing");
+
+            return email;
         }
     }
 }

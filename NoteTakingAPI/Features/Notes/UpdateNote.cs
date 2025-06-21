@@ -1,9 +1,9 @@
-﻿using static NoteTakingAPI.Infrastructure.Database.Entities.AppDbContext;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using FluentValidation;
 using NoteTakingAPI.Infrastructure.Database;
 using NoteTakingAPI.Common.Extensions;
 using Microsoft.EntityFrameworkCore;
+using NoteTakingAPI.Infrastructure.Database.Entities;
 
 namespace NoteTakingAPI.Features.Notes
 {
