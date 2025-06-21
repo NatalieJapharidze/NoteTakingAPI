@@ -221,16 +221,6 @@ dotnet ef database update PreviousMigrationName
 dotnet ef migrations script
 ```
 
-### Running Tests
-
-```bash
-# Run all tests
-dotnet test
-
-# Run with coverage
-dotnet test --collect:"XPlat Code Coverage"
-```
-
 ### Docker Development
 
 ```bash
@@ -297,29 +287,6 @@ docker-compose down -v && docker-compose up -d --build
 
 ## 🚀 Deployment
 
-### Production Environment Variables
-
-```bash
-export ASPNETCORE_ENVIRONMENT=Production
-export ConnectionStrings__DefaultConnection="Your-Production-DB-String"
-export JwtSettings__Secret="Your-Super-Secure-256-Bit-Secret-Key"
-```
-
-### Docker Production
-
-```bash
-# Build production image
-docker build -t noteapi:latest .
-
-# Run with environment variables
-docker run -d \
-  --name noteapi \
-  -p 80:80 \
-  -e ASPNETCORE_ENVIRONMENT=Production \
-  -e ConnectionStrings__DefaultConnection="Your-Production-DB" \
-  noteapi:latest
-```
-
 ## 🧪 Testing the API
 
 ### Using the Interactive Documentation
@@ -340,39 +307,6 @@ See the [API Usage Examples](#-api-usage-examples) section above.
 
 Import the OpenAPI specification from `/openapi/v1.json` for a complete Postman collection.
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Follow the Vertical Slice Architecture pattern
-4. Add your feature as a complete slice in the appropriate domain folder
-5. Ensure all tests pass
-6. Commit your changes (`git commit -m 'Add amazing feature'`)
-7. Push to the branch (`git push origin feature/amazing-feature`)
-8. Open a Pull Request
-
-### Code Style Guidelines
-
-- Follow **Vertical Slice Architecture** principles
-- Place complete features in single files under `Features/`
-- Use **FluentValidation** for input validation
-- Add comprehensive logging
-- Write self-documenting code with clear naming
-- Follow established patterns in existing features
-
-
-## 🙏 Acknowledgments
-
-- Built with ❤️ using .NET 9 and modern development practices
-- Inspired by Vertical Slice Architecture principles
-- Secured with industry-standard authentication patterns
-- Containerized for seamless deployment
-
-## 📞 Support
-
-For support, please open an issue in the GitHub repository or contact the development team.
-
----
 
 **Built with 🚀 by [Nato Japharidze]**
 
